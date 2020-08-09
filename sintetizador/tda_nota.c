@@ -44,32 +44,32 @@ struct notas_guardadas{
 
 notas_guardadas_t *nota_crear_espacio(){
 
-	notas_guardadas_t *notas=malloc(sizeof(notas_guardadas_t));
-	if (notas==NULL){
+	notas_guardadas_t *notas = malloc(sizeof(notas_guardadas_t));
+	if (notas == NULL){
 		return NULL;
 	}
-	notas->vec_notas=malloc(sizeof(tda_nota_t));
-	if (notas->vec_notas==NULL){
+	notas->vec_notas = malloc(sizeof(tda_nota_t));
+	if (notas->vec_notas == NULL){
 		free(notas);
 		return NULL;
 	}
-	notas->vec_notas->tono=malloc(sizeof(nota_t)*CHOP);
-	if (notas->vec_notas->tono==NULL){
+	notas->vec_notas->tono = malloc(sizeof(nota_t)*CHOP);
+	if (notas->vec_notas->tono == NULL){
 		free(notas->vec_notas);
 		free(notas);
 		return NULL;
 
 	}
-	notas->vec_notas->octava=malloc(sizeof(unsigned char)*CHOP);
-	if (notas->vec_notas->octava==NULL){
+	notas->vec_notas->octava = malloc(sizeof(unsigned char)*CHOP);
+	if (notas->vec_notas->octava == NULL){
 		free(notas->vec_notas->tono);
 		free(notas->vec_notas);
 		free(notas);
 		return NULL;
 
 	}
-	notas->vec_notas->intensidad=malloc(sizeof(unsigned char)*CHOP);
-	if (notas->vec_notas->intensidad==NULL){
+	notas->vec_notas->intensidad = malloc(sizeof(unsigned char)*CHOP);
+	if (notas->vec_notas->intensidad == NULL){
 		free(notas->vec_notas->octava);
 		free(notas->vec_notas->tono);
 		free(notas->vec_notas);
@@ -77,8 +77,8 @@ notas_guardadas_t *nota_crear_espacio(){
 		return NULL;
 
 	}
-	notas->vec_notas->pulso_0=malloc(sizeof(uint32_t)*CHOP);
-	if (notas->vec_notas->pulso_0==NULL){
+	notas->vec_notas->pulso_0 = malloc(sizeof(uint32_t)*CHOP);
+	if (notas->vec_notas->pulso_0 == NULL){
 		free(notas->vec_notas->intensidad);
 		free(notas->vec_notas->octava);
 		free(notas->vec_notas->tono);
@@ -87,8 +87,8 @@ notas_guardadas_t *nota_crear_espacio(){
 		return NULL;
 
 	}
-	notas->vec_notas->pulso_f=malloc(sizeof(uint32_t)*CHOP);
-	if (notas->vec_notas->pulso_f==NULL){
+	notas->vec_notas->pulso_f = malloc(sizeof(uint32_t)*CHOP);
+	if (notas->vec_notas->pulso_f == NULL){
 		free(notas->vec_notas->pulso_0);
 		free(notas->vec_notas->intensidad);
 		free(notas->vec_notas->octava);
@@ -98,11 +98,11 @@ notas_guardadas_t *nota_crear_espacio(){
 		return NULL;
 
 	}
-	notas->lon=0;
-	notas->pedido=CHOP;
+	notas->lon = 0;
+	notas->pedido = CHOP;
 
 	for (size_t i = 0; i < MAX_NOTAS; ++i){
-		notas->arreglo_notas_encendida[i].prendido=0;
+		notas->arreglo_notas_encendida[i].prendido = 0;
 	}
 
 	return notas;
@@ -110,35 +110,35 @@ notas_guardadas_t *nota_crear_espacio(){
 
 bool nota_redimensionar_vec(notas_guardadas_t *notas){
 
-	nota_t *aux=realloc(notas->vec_notas->tono,sizeof(nota_t)*((notas->pedido)+CHOP));
-	if (aux==NULL){
+	nota_t *aux = realloc(notas->vec_notas->tono,sizeof(nota_t)*((notas->pedido)+CHOP));
+	if (aux == NULL){
 		free(notas->vec_notas);
 		free(notas);
 		return false;
 	}
-	notas->vec_notas->tono=aux;
+	notas->vec_notas->tono = aux;
 
-	unsigned char *aux2=realloc(notas->vec_notas->octava,sizeof(unsigned char)*((notas->pedido)+CHOP));
-	if (aux2==NULL){
+	unsigned char *aux2 = realloc(notas->vec_notas->octava,sizeof(unsigned char)*((notas->pedido)+CHOP));
+	if (aux2 == NULL){
 		free(notas->vec_notas->tono);
 		free(notas->vec_notas);
 		free(notas);
 		return false;
 	}
-	notas->vec_notas->octava=aux2;
+	notas->vec_notas->octava = aux2;
 
-	unsigned char *aux3=realloc(notas->vec_notas->intensidad,sizeof(unsigned char)*((notas->pedido)+CHOP));
-	if (aux3==NULL){
+	unsigned char *aux3 = realloc(notas->vec_notas->intensidad,sizeof(unsigned char)*((notas->pedido)+CHOP));
+	if (aux3 == NULL){
 		free(notas->vec_notas->octava);
 		free(notas->vec_notas->tono);
 		free(notas->vec_notas);
 		free(notas);
 		return false;
 	}
-	notas->vec_notas->intensidad=aux3;
+	notas->vec_notas->intensidad = aux3;
 
-	uint32_t *aux4=realloc(notas->vec_notas->pulso_0,sizeof(uint32_t)*((notas->pedido)+CHOP));
-	if (aux4==NULL){
+	uint32_t *aux4 = realloc(notas->vec_notas->pulso_0,sizeof(uint32_t)*((notas->pedido)+CHOP));
+	if (aux4 == NULL){
 		free(notas->vec_notas->intensidad);
 		free(notas->vec_notas->octava);
 		free(notas->vec_notas->tono);
@@ -146,10 +146,10 @@ bool nota_redimensionar_vec(notas_guardadas_t *notas){
 		free(notas);
 		return false;
 	}
-	notas->vec_notas->pulso_0=aux4;
+	notas->vec_notas->pulso_0 = aux4;
 
-	uint32_t *aux5=realloc(notas->vec_notas->pulso_f,sizeof(uint32_t)*((notas->pedido)+CHOP));
-	if (aux5==NULL){
+	uint32_t *aux5 = realloc(notas->vec_notas->pulso_f,sizeof(uint32_t)*((notas->pedido)+CHOP));
+	if (aux5 == NULL){
 		free(notas->vec_notas->pulso_0);
 		free(notas->vec_notas->intensidad);
 		free(notas->vec_notas->octava);
@@ -158,9 +158,9 @@ bool nota_redimensionar_vec(notas_guardadas_t *notas){
 		free(notas);
 		return false;
 	}
-	notas->vec_notas->pulso_f=aux5;
+	notas->vec_notas->pulso_f = aux5;
 
-	notas->pedido+=CHOP;
+	notas->pedido += CHOP;
 
 	return true;
 }
@@ -172,7 +172,7 @@ bool nota_redimensionar_vec(notas_guardadas_t *notas){
 bool nota_guardar_encendida(notas_guardadas_t *notas,nota_t n,unsigned char oct,unsigned char inte,uint32_t tim){
 	
 
-	if (inte==0){
+	if (inte == 0){
 			nota_guardar_apagada(notas,n,oct,inte,tim);
 			return true;
 	}
@@ -196,7 +196,7 @@ bool nota_guardar_encendida(notas_guardadas_t *notas,nota_t n,unsigned char oct,
 
 bool nota_guardar_apagada(notas_guardadas_t *notas,nota_t n,unsigned char oct,unsigned char inte,uint32_t tim){
 	
-	if (notas->lon==notas->pedido-1){
+	if (notas->lon == notas->pedido-1){
 		
 		if (!nota_redimensionar_vec(notas)){
 			printf("apagadas primer false\n");
@@ -212,7 +212,7 @@ bool nota_guardar_apagada(notas_guardadas_t *notas,nota_t n,unsigned char oct,un
 			notas->vec_notas->intensidad[notas->lon]=notas->arreglo_notas_encendida[i].intensidad;
 			notas->vec_notas->pulso_0[notas->lon]=notas->arreglo_notas_encendida[i].pulso_0;
 			notas->vec_notas->pulso_f[notas->lon]=tim;
-			notas->arreglo_notas_encendida[i].prendido = 0;
+			notas->arreglo_notas_encendida[i].prendido=0;
 
 			notas->lon = notas->lon + 1;
 

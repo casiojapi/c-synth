@@ -187,7 +187,7 @@ void descartar_metaevento(FILE *f, uint8_t tamagno){
         leer_uint8_t(f);
     }
 }
-notas_guardadas_t* lectra_notas(char *nombre_midi,char canal){
+notas_guardadas_t* lectura_notas(char *nombre_midi,char canal){
     // APERTURA DE ARCHIVO MIDI:
     FILE *archivo_midi = fopen(nombre_midi, "rb");
      if(archivo_midi == NULL) {

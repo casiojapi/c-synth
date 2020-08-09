@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #ifndef TDA_TRAMO_H
 #define TDA_TRAMO_H

@@ -6,6 +6,11 @@
 #include "tda_nota.h"
 #include "tda_datos.h"
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// EL TDA DATOS TIENE COMO FUNCION PRINCIPAL TOMAR LOS VALORES OBTENIDOS EN LECTURA MIDI Y TRANFORMALOS EN 
+// DATOS DE TIPO NECESARIO PARA LOS PARAMETROS DE TDA TRAMO 
+// ESTOS DATOS SON AGRUPADOS EN VECTORES DINAMICOS PARA UN MEJOR ACCESO ITERATIVO
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Estrectura de punteros que guarda los los datos de todas las notas pasadas por el TDA NOTAS
 struct datos_tranfer{
@@ -72,7 +77,7 @@ datos_tranfer_t* datos_crear_espacio(notas_guardadas_t *notas,uint16_t negra_por
 	return datos;
 }
 
-
+// FUNCION ENCARGADA DE DEVOLVER LOS VECTORES DINAMOCOS CON LOS DATOS 
 void datos_pasar(datos_tranfer_t *datos, double **t0_datos, double **tf_datos,float **amp_datos, float **frq_datos, size_t *n_datos){
 	*t0_datos = datos->t0;
 	*tf_datos = datos->tf;

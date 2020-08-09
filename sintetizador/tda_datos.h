@@ -1,4 +1,3 @@
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -8,6 +7,7 @@
 #include "tda_nota.h"
 
 
+//FUNCIONES DE TRAFERENCIAS DE DATOS PROCESADOS 
 typedef struct datos_tranfer datos_tranfer_t;
 
 datos_tranfer_t *datos_crear_espacio(notas_guardadas_t *notas, uint16_t negra_por_segundo);

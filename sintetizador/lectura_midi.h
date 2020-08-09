@@ -1,4 +1,3 @@
-
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -23,6 +22,6 @@ bool leer_pista(FILE *f, uint32_t *tamagno);
 bool leer_tiempo(FILE *f, uint32_t *tiempo);
 bool leer_evento(FILE *f, evento_t *evento, char *canal, int *longitud, uint8_t mensaje[]);
 void descartar_metaevento(FILE *f, uint8_t tamagno);
-notas_guardadas_t* lectra_notas(char *nombre_midi , char canal);
+notas_guardadas_t* lectura_notas(char *nombre_midi , char canal);
 
 #endif

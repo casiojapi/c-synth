@@ -33,7 +33,7 @@ int main(int argc, char const *argv[]){
     }
 
     //APERTURA DE ARCHIVO MIDI Y LECTURA DE DATOS
-   	notas_guardadas_t *notas= lectra_notas(nombre_midi,canal);
+   	notas_guardadas_t *notas= lectura_notas(nombre_midi,canal);
    	if(notas == NULL){
 		fprintf(stderr, "Error de memoria guardando notas.\n");
    		return 1;
