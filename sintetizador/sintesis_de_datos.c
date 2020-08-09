@@ -11,23 +11,24 @@ tda_tramo_t *sintesis_completa(tda_sintetizador_t *sinte, datos_tranfer_t *trans
 
     datos_pasar(trans_notas, &t0, &tf, &amp, &fre, &n_datos);
 
+
     float *a_arm ,*f_arm;
     size_t n_arm; 
 
-    sinte_get_fqr_arm_n_arm(&a_arm, &f_arm, &n_arm, sinte);
+    sintetizador_get_armonicos(sinte, &a_arm, &f_arm, &n_arm);
 
     f_modulacion_t ataque, sostenido, decaimiento;
+    sintetizador_get_modulacion(sinte, &ataque, &sostenido, &decaimiento);
 
-    sinte_ataque_sostenido_decaimiento(sinte, &ataque, &sostenido, &decaimiento);
+    float *para_ataque = sintetizador_parametros_ataque(sinte);
+    float *para_sostenido = sintetizador_parametros_sostenido(sinte);
+    float *para_decaimiento = sintetizador_parametros_decaimiento(sinte);
 
-    float *para_ataque = sinte_get_para_ataque(sinte);
-    float *para_sostenido = sinte_get_para_sostenido(sinte);
-    float *para_decaimiento = sinte_get_para_decaimiento(sinte);
+    double td = sintetizador_get_td(sinte);
+	double ta = sintetizador_get_ta(sinte);
 
-    double td = sinte_get_td(sinte);
-	double ta = sinte_get_ta(sinte);
-
-    tda_tramo_t *tramo_completo = muestreo_completo(t0, tf, td, f_m, fre, amp, a_arm, f_arm, n_arm, n_datos, para_ataque, para_sostenido, para_decaimiento, ataque, sostenido, decaimiento, ta);
+    tda_tramo_t *tramo_completo = tramo_muestreo_completo(t0, tf, td, f_m, fre, amp, a_arm, f_arm, n_arm, n_datos, para_ataque, para_sostenido, para_decaimiento, ataque, sostenido, decaimiento, ta);
     
     return tramo_completo;
 }
+

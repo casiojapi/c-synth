@@ -27,7 +27,7 @@ void inicializar_muestras(float *v, size_t n);
 
 //Funcion que unicamente muestrea armonicos recibiendo un vector ya existente. Se usa luego en "tramo_crear_muestreo".
 //Precondicion: los punteros que recibe no deben estar apuntando a NULL, y debe ser un vector de muestreos valido.
-void tramo_muestrear_armonicos(float *v, size_t n, double t0, int f_m, float f, float a, float *a_arm, float *f_arm, size_t n_fa);
+void muestrear_armonicos(float *v, size_t n, double t0, int f_m, float f, float a, float *a_arm, float *f_arm, size_t n_fa);
 
 //Funcion que recibe los siguientes parametros y a partir de estos crea un TDA tramo, lo inicializa, muestrea su frecuencia fundamental, y luego todos sus armonicos. 
 //Precondicion: Los punteros que recibe a vectores de armonicos no deben apuntar a NULL.
@@ -43,11 +43,11 @@ bool tramo_extender(tda_tramo_t *destino, const tda_tramo_t *extension, int f_m)
 
 // Funcion que recibe un tramo y las funciones y parametros leidos del archivo de texto "sintetizador.txt"
 // Precondicion: que no reciba el tramo apuntando a NULL. 
-void tramo_muestrear_modulacion(tda_tramo_t *tramo, f_modulacion_t ataque, f_modulacion_t sostenido, f_modulacion_t decaimiento, int f_m, float *para_ataque, float *para_sostenido, float *para_decaimiento, double t_a, double t_d);
+void muestrear_modulacion(tda_tramo_t *tramo, f_modulacion_t ataque, f_modulacion_t sostenido, f_modulacion_t decaimiento, int f_m, float *para_ataque, float *para_sostenido, float *para_decaimiento, double t_a, double t_d);
 
 //Funcion que recibe una serie parametros para hacer mas sencilla la sintesis y muestreo completo desde el main. 
 //Precondicion: NO puede recibir punteros a NULL, 
-tda_tramo_t *tramo_muestreo_completo(double *t0, double *tf, double td, int f_m, float *fre, float *amp, float *a_arm, float *f_arm, size_t n_arm, size_t n_notas, float *para_ataque, float *para_sostenido, float *para_decaimiento, f_modulacion_t ataque, f_modulacion_t sostenido, f_modulacion_t decaimiento, double t_a);
+tda_tramo_t *muestreo_completo(double *t0, double *tf, double td, int f_m, float *fre, float *amp, float *a_arm, float *f_arm, size_t n_arm, size_t n_notas, float *para_ataque, float *para_sostenido, float *para_decaimiento, f_modulacion_t ataque, f_modulacion_t sostenido, f_modulacion_t decaimiento, double t_a);
 
 //Funcion que pasa el vector desde adentro de un tramo a un vector de int16_t y lo escala para dejar el maximo en 32667. Devuelve el numero de muestras por la interfaz (n_muestras)
 //Precondicion: El puntero al tramo no debe apuntar a NULL.

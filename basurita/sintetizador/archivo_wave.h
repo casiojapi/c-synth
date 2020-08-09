@@ -28,8 +28,6 @@ bool wave_volcar_datos(wave_t *wave, size_t n_muestras, int16_t *muestras, int f
 
 //Funcion que se encarga de escribir todo el archivo wave, sacando la informacion de un wave_t lleno. 
 //Precondicion: debe recibir un archivo valido en modo "rb" ".wav". Y tambien debe recibir una estructura wave valida (NO PUEDE APUNTAR A NULL)
-bool wave_escribir_archivo(wave_t *wave, FILE *archivo_wave);
+bool escribir_archivo_wave(wave_t *wave, FILE *archivo_wave);
 
-
-bool wave_escribir_completo(FILE *archivo_wave, int16_t *vector_int16, size_t n_muestras, int f_m);
 #endif

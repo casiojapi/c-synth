@@ -44,9 +44,9 @@ void tramo_destruir(tda_tramo_t *t){
 //Funcion que se encarga de hacer un muestreo de una frecuencia y amplitud puntual en un vector. 
 //Precondicion: el puntero que recibe no debe apuntar a NULL, y debe ser un vector de muestreos valido.
 void muestrear_senoidal(float *v, size_t n, double t0, int f_m, float f, float a){
-    double t;
+    double t = t0;
     for (size_t i = 0; i < n; i++) {
-        t = t0 + ((i * 1.0)/f_m);
+        t = (i * 1.0)/f_m;
         v[i] += a * sin(2*PI*f*t);
     }
 }
@@ -61,8 +61,8 @@ void inicializar_muestras(float *v, size_t n){
 
 //Funcion que unicamente muestrea armonicos recibiendo un vector ya existente. Se usa luego en "tramo_crear_muestreo".
 //Precondicion: los punteros que recibe no deben estar apuntando a NULL, y debe ser un vector de muestreos valido.
-void tramo_muestrear_armonicos(float *v, size_t n, double t0, int f_m, float f, float a, float *a_arm, float *f_arm, size_t n_fa){
-    
+void muestrear_armonicos(float *v, size_t n, double t0, int f_m, float f, float a, float *a_arm, float *f_arm, size_t n_fa){
+    inicializar_muestras(v, n);
     for (size_t i = 0; i < n_fa; i++) {
         muestrear_senoidal(v, n, t0, f_m, f * f_arm[i], a * a_arm[i]);
     }
@@ -75,9 +75,7 @@ tda_tramo_t *tramo_crear_muestreo(double t0, double tf, double td, int f_m, floa
     if (tramo == NULL){
         return NULL;    //valido que no sea NULL ya que en _tramo_crear tengo un malloc
     }
-    inicializar_muestras(tramo->v, tramo->n);
-    muestrear_senoidal(tramo->v, tramo->n, t0, f_m, f, a);
-    tramo_muestrear_armonicos(tramo->v, tramo->n, t0, f_m, f, a, a_arm, f_arm, n_arm);
+    muestrear_armonicos(tramo->v, tramo->n, t0, f_m, f, a, a_arm, f_arm, n_arm);
     return tramo;
 }
 
@@ -121,7 +119,7 @@ bool tramo_extender(tda_tramo_t *destino, const tda_tramo_t *extension, int f_m)
 
 // Funcion que recibe un tramo y las funciones y parametros leidos del archivo de texto "sintetizador.txt"
 // Precondicion: que no reciba el tramo apuntando a NULL. 
-void tramo_muestrear_modulacion(tda_tramo_t *tramo, f_modulacion_t ataque, f_modulacion_t sostenido, f_modulacion_t decaimiento, int f_m, float *para_ataque, float *para_sostenido, float *para_decaimiento, double t_a, double t_d){
+void muestrear_modulacion(tda_tramo_t *tramo, f_modulacion_t ataque, f_modulacion_t sostenido, f_modulacion_t decaimiento, int f_m, float *para_ataque, float *para_sostenido, float *para_decaimiento, double t_a, double t_d){
     double t0 = 0;
     double t;
     double duracion = tramo->tf - tramo->t0;
@@ -149,22 +147,22 @@ void tramo_muestrear_modulacion(tda_tramo_t *tramo, f_modulacion_t ataque, f_mod
 
 //Funcion que recibe una serie parametros para hacer mas sencilla la sintesis y muestreo completo desde el main. 
 //Precondicion: NO puede recibir punteros a NULL, 
-tda_tramo_t *tramo_muestreo_completo(double *t0, double *tf, double td, int f_m, float *fre, float *amp, float *a_arm, float *f_arm, size_t n_arm, size_t n_notas, float *para_ataque, float *para_sostenido, float *para_decaimiento, f_modulacion_t ataque, f_modulacion_t sostenido, f_modulacion_t decaimiento, double t_a){
+tda_tramo_t *muestreo_completo(double *t0, double *tf, double td, int f_m, float *fre, float *amp, float *a_arm, float *f_arm, size_t n_arm, size_t n_notas, float *para_ataque, float *para_sostenido, float *para_decaimiento, f_modulacion_t ataque, f_modulacion_t sostenido, f_modulacion_t decaimiento, double t_a){
     size_t i = 0;
-    tda_tramo_t *tramo_uno = tramo_crear_muestreo(t0[i], tf[i], td, f_m, fre[i], amp[i], f_arm, a_arm, n_arm);
+    tda_tramo_t *tramo_uno = tramo_crear_muestreo(t0[i], tf[i], td, f_m, fre[i], amp[i], a_arm, f_arm, n_arm);
     if(tramo_uno == NULL){
         printf("error de memoria creando tramo\n");
         return NULL;
     }
-    tramo_muestrear_modulacion(tramo_uno, ataque, sostenido, decaimiento, f_m, para_ataque, para_sostenido, para_decaimiento, t_a, td);
+    muestrear_modulacion(tramo_uno, ataque, sostenido, decaimiento, f_m, para_ataque, para_sostenido, para_decaimiento, t_a, td);
     tda_tramo_t *tramo_siguiente;
     for(i = 1; i < n_notas; i++){
-        tramo_siguiente = tramo_crear_muestreo(t0[i], tf[i], td, f_m, fre[i], amp[i], f_arm, a_arm, n_arm);
+        tramo_siguiente = tramo_crear_muestreo(t0[i], tf[i], td, f_m, fre[i], amp[i], a_arm, f_arm, n_arm);
         if(tramo_siguiente == NULL){
             tramo_destruir(tramo_uno);
             return NULL;
         }
-        tramo_muestrear_modulacion(tramo_siguiente, ataque, sostenido, decaimiento, f_m, para_ataque, para_sostenido, para_decaimiento, t_a, td);
+        muestrear_modulacion(tramo_siguiente, ataque, sostenido, decaimiento, f_m, para_ataque, para_sostenido, para_decaimiento, t_a, td);
         if (!tramo_extender(tramo_uno, tramo_siguiente, f_m)){
             tramo_destruir(tramo_uno);
             tramo_destruir(tramo_siguiente);
@@ -185,15 +183,10 @@ int16_t *tramo_a_int16(tda_tramo_t *tramo, size_t *n_muestras){
     float cte; 
     float max = 0;
     for(size_t i = 0; i < tramo->n; i++){
-        if(tramo->v[i] > 0){
-            if(tramo->v[i] > max)
-                max = tramo->v[i];
-        }else
-            if(-1 * tramo->v[i] > max)
-                max = tramo->v[i];
-        
+        if(tramo->v[i] > max)
+            max = tramo->v[i];
     }
-    cte = (float)MAX_INT16T/(max);
+    cte = (float)MAX_INT16T/max;
     int16_t *vector;
     if((vector = malloc(sizeof(int16_t) * tramo->n)) == NULL){
         return NULL;

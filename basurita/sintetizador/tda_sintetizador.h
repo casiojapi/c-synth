@@ -30,24 +30,20 @@ typedef struct dicc_modulacion dicc_modulacion_t;
 
 //funciones del sintetizador
 tda_sintetizador_t *sintetizador_crear();
+void _destruir_sintetizador_n(tda_sintetizador_t *sint, size_t n);
+void destruir_sintetizador(tda_sintetizador_t *sint);
+void sinte_get_fqr_arm_n_arm(float **arm,float **fqr,size_t *n,tda_sintetizador_t *sint);
+void sinte_ataque_sostenido_decaimiento(tda_sintetizador_t *sint,f_modulacion_t *ataque,f_modulacion_t *sotenido,f_modulacion_t *decaimiento);
+double sinte_get_td(tda_sintetizador_t *sint);
+double sinte_get_ta(tda_sintetizador_t *sint);
 
-void sintetizador_destruir(tda_sintetizador_t *sint);
-void sintetizador_get_armonicos(tda_sintetizador_t *sint, float **arm, float **fre, size_t *n);
-void sintetizador_get_modulacion(tda_sintetizador_t *sint,f_modulacion_t *ataque,f_modulacion_t *sotenido,f_modulacion_t *decaimiento);
-double sintetizador_get_td(tda_sintetizador_t *sint);
-double sintetizador_get_ta(tda_sintetizador_t *sint);
 
-
-float *sintetizador_parametros_ataque(tda_sintetizador_t *sint);
-float *sintetizador_parametros_sostenido(tda_sintetizador_t *sint);
-float *sintetizador_parametros_decaimiento(tda_sintetizador_t *sint);
+float *sinte_get_para_ataque(tda_sintetizador_t *sint);
+float *sinte_get_para_sostenido(tda_sintetizador_t *sint);
+float *sinte_get_para_decaimiento(tda_sintetizador_t *sint);
 
 //Declaracion de la funcion encargada de leer y sustraer los datos del archivo "sintetizador.txt". Recibe el nombre del archivo, y devuelve por la interfaz un sintetizador con los datos sustraidos del archivo de texto. Devuelve true si se ejecuto correctamente, false si hay algun error con el archivo.
-bool sintetizador_leer_archivo(tda_sintetizador_t *sint, char *nombre_archivo);
-
-//funcion para simplificar un poco mas el main. Se encarga de crear un sintetizador, leer el archivo "sintetizador.txt" y guardar esa informacion en el sintetizador previamente creado.
-//Pre: se debe recibir una cadena valida como nombre del archivo de sintetizador.txt
-tda_sintetizador_t *sintetizador_crear_leer(char *sinte_nombre_archivo);
+bool leer_archivo_sintetizador(tda_sintetizador_t *sint, char *nombre_archivo);
 
 //Declaracion de todas las posibles funciones de modulacion para el sintetizador
 float mod_constant(const float *, double);

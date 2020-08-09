@@ -45,17 +45,7 @@ struct tda_sintetizador{
     modulacion_t *mod;          //Guarda un vector de modulaciones, de cantidad 3 que haya leido del archivo "sintetizador.txt"
 };
 
-//Funcion interna que en caso de haber fallo de memoria a la hora de crear un sintetizador, y falle en la asignacion de parametros, se le puede asignar hasta que indice liberar.
-static void sintetizador_destruir_n(tda_sintetizador_t *sint, size_t n){
-    free(sint->arm->a_arm);
-    free(sint->arm->f_arm);
-    free(sint->arm);
-    for(size_t i = 0; i < n; i++){
-        free(sint->mod[i].parametros);
-    }
-    free(sint->mod);
-    free(sint);
-}
+
 
 //Crea un sintetizador, devuelve NULL en caso de que la memoria falle (y libera la memoria pedida en caso de falla).
 tda_sintetizador_t *sintetizador_crear(){
@@ -90,7 +80,7 @@ tda_sintetizador_t *sintetizador_crear(){
     }
     for(size_t i = 0; i < MAX_PARAMETROS; i++){
         if((sint->mod[i].parametros = malloc(sizeof(float) * MAX_PARAMETROS)) == NULL){
-            sintetizador_destruir_n(sint, --i);
+            _destruir_sintetizador_n(sint, --i);
             return NULL;
         }
     }
@@ -98,8 +88,20 @@ tda_sintetizador_t *sintetizador_crear(){
 }
 
 
+//Funcion interna que en caso de haber fallo de memoria a la hora de crear un sintetizador, y falle en la asignacion de parametros, se le puede asignar hasta que indice liberar.
+void _destruir_sintetizador_n(tda_sintetizador_t *sint, size_t n){
+    free(sint->arm->a_arm);
+    free(sint->arm->f_arm);
+    free(sint->arm);
+    for(size_t i = 0; i < n; i++){
+        free(sint->mod[i].parametros);
+    }
+    free(sint->mod);
+    free(sint);
+}
+
 //Funcion para destruir sintetizador. 
-void sintetizador_destruir(tda_sintetizador_t *sint){
+void destruir_sintetizador(tda_sintetizador_t *sint){
     free(sint->arm->a_arm);
     free(sint->arm->f_arm);
     free(sint->arm);
@@ -113,39 +115,39 @@ void sintetizador_destruir(tda_sintetizador_t *sint){
 //PRIMITIVAS QUE NECESITAMOS
 //armonicos
 
-void sintetizador_get_armonicos(tda_sintetizador_t *sint, float **arm, float **fre, size_t *n){
+void sinte_get_fqr_arm_n_arm(float **arm,float **fqr,size_t *n,tda_sintetizador_t *sint){
     *arm=sint->arm->a_arm;
-    *fre=sint->arm->f_arm;
+    *fqr=sint->arm->f_arm;
     *n=sint->arm->n;
 }
 
 //Funciones que devuelven algo especifico del sintetizador, para no tener que acceder internamente. (modulacion)
 
 
-void sintetizador_get_modulacion(tda_sintetizador_t *sint,f_modulacion_t *ataque,f_modulacion_t *sotenido,f_modulacion_t *decaimiento){
+void sinte_ataque_sostenido_decaimiento(tda_sintetizador_t *sint,f_modulacion_t *ataque,f_modulacion_t *sotenido,f_modulacion_t *decaimiento){
     *ataque=sint->mod[0].funcion;
     *sotenido=sint->mod[1].funcion;
     *decaimiento=sint->mod[2].funcion;
 }
 
 //(tiempos de modulacion)
-double sintetizador_get_td(tda_sintetizador_t *sint){
+double sinte_get_td(tda_sintetizador_t *sint){
     return sint->mod[2].parametros[0];
 }
-double sintetizador_get_ta(tda_sintetizador_t *sint){
+double sinte_get_ta(tda_sintetizador_t *sint){
     return sint->mod[0].parametros[0];
 }
 
 //(parametros de modulacion)
-float *sintetizador_parametros_ataque(tda_sintetizador_t *sint){
+float *sinte_get_para_ataque(tda_sintetizador_t *sint){
     return sint->mod[0].parametros;
 }
 
-float *sintetizador_parametros_sostenido(tda_sintetizador_t *sint){
+float *sinte_get_para_sostenido(tda_sintetizador_t *sint){
     return sint->mod[1].parametros;
 }
 
-float *sintetizador_parametros_decaimiento(tda_sintetizador_t *sint){
+float *sinte_get_para_decaimiento(tda_sintetizador_t *sint){
     return sint->mod[2].parametros;
 }
 
@@ -153,7 +155,7 @@ float *sintetizador_parametros_decaimiento(tda_sintetizador_t *sint){
 
 //Lectura de archivo "sintetizador.txt".
 //Recibe un puntero a sintetizador ya creado, con su struct de armonicos ya creado pero no inicializado.
-bool sintetizador_leer_archivo(tda_sintetizador_t *sint, char *nombre_archivo){  
+bool leer_archivo_sintetizador(tda_sintetizador_t *sint, char *nombre_archivo){  
     if (sint == NULL)
         return false;
         
@@ -210,18 +212,6 @@ bool sintetizador_leer_archivo(tda_sintetizador_t *sint, char *nombre_archivo){
     }
     fclose(sinte_txt);
     return true;
-}
-
-tda_sintetizador_t *sintetizador_crear_leer(char *sinte_nombre_archivo){
-    tda_sintetizador_t *sintetizador = sintetizador_crear();
-	if(sintetizador == NULL)
-		return NULL;
-	// LECTURA DE ARCHIVO SINTETIZADOR.TXT
-    if(!sintetizador_leer_archivo(sintetizador, sinte_nombre_archivo)){
-		sintetizador_destruir(sintetizador);
-		return NULL;
-	}
-    return sintetizador;
 }
 
 

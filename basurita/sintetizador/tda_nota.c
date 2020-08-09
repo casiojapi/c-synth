@@ -247,7 +247,7 @@ float nota_frecuencia_pura(notas_guardadas_t *notas,size_t n){
 	float tono=notas->vec_notas->tono[n];
     float octava=notas->vec_notas->octava[n];
 
-	return FRECUENCI_LA4*(pow((float)2,(octava-4)+((float)(tono-LA-1)/12)));
+	return FRECUENCI_LA4*(pow((float)2,(octava-4)-((float)(tono-LA-1)/12)));
 }
 
 float nota_amplitud(notas_guardadas_t *notas,size_t n){
