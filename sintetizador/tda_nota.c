@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include <math.h>
 
-#include "codificacion_decodificacion.h"
 #include "tda_nota.h"
+
 
 
 // Estructura de vectores dinamicos , donde cada vector representa un n cantidad de datos leidos 
@@ -42,7 +42,7 @@ struct notas_guardadas{
 //                        FUNCIONES PARA EL PEDIDO DE MEMORIA PARA GUARDAR NOTAS 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-notas_guardadas_t *crear_espacio_para_notas(){
+notas_guardadas_t *nota_crear_espacio(){
 
 	notas_guardadas_t *notas=malloc(sizeof(notas_guardadas_t));
 	if (notas==NULL){
@@ -108,7 +108,7 @@ notas_guardadas_t *crear_espacio_para_notas(){
 	return notas;
 }
 
-bool redimensionar_vec_notas(notas_guardadas_t *notas){
+bool nota_redimensionar_vec(notas_guardadas_t *notas){
 
 	nota_t *aux=realloc(notas->vec_notas->tono,sizeof(nota_t)*((notas->pedido)+CHOP));
 	if (aux==NULL){
@@ -169,11 +169,11 @@ bool redimensionar_vec_notas(notas_guardadas_t *notas){
 //         FUNCIONES PARA EL MANEJO DE NOTAS EXTRAIDAS DEL MIDI Y GUARDADAS EN EL VECTOR DINAMICO
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool guardar_nota_encendida(notas_guardadas_t *notas,nota_t n,unsigned char oct,unsigned char inte,uint32_t tim){
+bool nota_guardar_encendida(notas_guardadas_t *notas,nota_t n,unsigned char oct,unsigned char inte,uint32_t tim){
 	
 
 	if (inte==0){
-			guardar_nota_apagada(notas,n,oct,inte,tim);
+			nota_guardar_apagada(notas,n,oct,inte,tim);
 			return true;
 	}
 	for (int i = 0; i < MAX_NOTAS; ++i){
@@ -194,11 +194,11 @@ bool guardar_nota_encendida(notas_guardadas_t *notas,nota_t n,unsigned char oct,
 	return false;
 }
 
-bool guardar_nota_apagada(notas_guardadas_t *notas,nota_t n,unsigned char oct,unsigned char inte,uint32_t tim){
+bool nota_guardar_apagada(notas_guardadas_t *notas,nota_t n,unsigned char oct,unsigned char inte,uint32_t tim){
 	
 	if (notas->lon==notas->pedido-1){
 		
-		if (!redimensionar_vec_notas(notas)){
+		if (!nota_redimensionar_vec(notas)){
 			printf("apagadas primer false\n");
 			return false;
 		}
@@ -223,11 +223,11 @@ bool guardar_nota_apagada(notas_guardadas_t *notas,nota_t n,unsigned char oct,un
 	return false;
 }
 
-size_t lon_notas_guardadas(notas_guardadas_t *notas){
+size_t nota_guardadas_longitud(notas_guardadas_t *notas){
 	return notas->lon;
 }
 
-void destruir_notas_guardadas(notas_guardadas_t *notas){
+void notas_destruir(notas_guardadas_t *notas){
 	
 	free(notas->vec_notas->pulso_f);
 	free(notas->vec_notas->pulso_0);
@@ -242,25 +242,25 @@ void destruir_notas_guardadas(notas_guardadas_t *notas){
 //       FUNCIONES PARA EL MANEJO DEL TDA NOTAS PARA PASAR DEL LENGUJE MIDI A PARAMETROS DEL SINTETIZADOR
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-float frecuencia_pura(notas_guardadas_t *notas,size_t n){
+float nota_frecuencia_pura(notas_guardadas_t *notas,size_t n){
 
 	float tono=notas->vec_notas->tono[n];
     float octava=notas->vec_notas->octava[n];
 
-	return FRECUENCI_LA4*(pow((float)2,(octava-4)+((float)(tono-LA)/12)));
+	return FRECUENCI_LA4*(pow((float)2,(octava-4)-((float)(tono-LA-1)/12)));
 }
 
-float amplitud_de_la_nota(notas_guardadas_t *notas,size_t n){
+float nota_amplitud(notas_guardadas_t *notas,size_t n){
 
 	return (float)notas->vec_notas->intensidad[n];
 }
 
-double tiempo_inicial_nota(notas_guardadas_t *notas,size_t n, uint16_t pulso_por_segundo){
+double nota_tiempo_inicial(notas_guardadas_t *notas,size_t n, uint16_t pulso_por_segundo){
 
 	return (double)notas->vec_notas->pulso_0[n] / (double)pulso_por_segundo ;
 }
 
-double tiempo_final_nota(notas_guardadas_t *notas,size_t n,uint16_t pulso_por_segundo){
+double nota_tiempo_final(notas_guardadas_t *notas,size_t n,uint16_t pulso_por_segundo){
 	
 	return (double)notas->vec_notas->pulso_f[n] / (double)pulso_por_segundo ;
 }

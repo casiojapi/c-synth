@@ -9,7 +9,7 @@ tda_tramo_t *sintesis_completa(tda_sintetizador_t *sinte, datos_tranfer_t *trans
     float *amp, *fre;
 	size_t n_datos;
 
-    pasar_datos(trans_notas, &t0, &tf, &amp, &fre, &n_datos);
+    datos_pasar(trans_notas, &t0, &tf, &amp, &fre, &n_datos);
 
     float *a_arm ,*f_arm;
     size_t n_arm; 

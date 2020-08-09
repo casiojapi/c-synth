@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdint.h>
-#include <string.h>
 #include <stdlib.h>
 
 #include "tda_sintetizador.h"
@@ -10,6 +9,7 @@
 #include "tda_datos.h"
 #include "lectura_midi.h"
 #include "sintesis_de_datos.h"
+#include "entrada.h"
 
 #define MAX_ARGUMENTOS 10
 #define MAX_NOMBRE 256
@@ -30,66 +30,27 @@ int main(int argc, char const *argv[]){
     uint16_t pulsos_por_segundo = DEF_PULSOS_POR_SEGUNDO;
     char canal = 0;
 
-    //USO DEL PROGRAMA
-	if(argc < 7){
-		fprintf(stderr, "Error, faltan comandos...\nUso: $ ./sintetizador -s <sintetizador.txt> -i <entrada.mid> -o <salida.wav> [-c <canal>] [-f <frecuencia>] [-r <pulsosporsegundo>]\n");
-		return 1;
-	}
-	for (int i = 1; i < argc; ++i){
-		if (!strcmp(argv[i],"-s")){
-			i++;
-			strcpy(nombre_sint, argv[i]);
-			
-		}
-		if (!strcmp(argv[i],"-i")){
-			i++;
-			strcpy(nombre_midi, argv[i]);
-		}
-		if (!strcmp(argv[i],"-o")){
-			i++;
-			strcpy(nombre_wave, argv[i]);
-		}
-		if (!strcmp(argv[i],"-r")){
-			i++;
-			pulsos_por_segundo = atoi(argv[i]);
-		}
-		if (!strcmp(argv[i],"-c")){
-			i++;
-			canal = atoi(argv[i]);
-		}
-		if (!strcmp(argv[i],"-f")){
-			i++;
-			f_m = atoi(argv[i]);
-		}
-	}
+   if (lectura_entrada(argc,argv,nombre_sint,nombre_midi,nombre_wave,&f_m,&pulsos_por_segundo,&canal) == false){
+   	return 1;
+   }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//	                              EXTRACCION DE DATOS DEL MIDI
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	// APERTURA DE ARCHIVO MIDI:
-    FILE *archivo_midi = fopen(nombre_midi, "rb");
-    if(archivo_midi == NULL) {
-        fprintf(stderr, "Error, no se pudo abrir el archivo midi: \"%s\".\n", nombre_midi);
-        return 1;
-    }
-    //LECTURA DEL ARCHIVO MIDI
-    notas_guardadas_t *notas = crear_espacio_para_notas();
-    if (!leer_midi(archivo_midi, notas, canal)){
-		fprintf(stderr, "Error, No se pudo leer el archivo midi: \"%s\".\n", nombre_midi);
-		destruir_notas_guardadas(notas);
- 		fclose(archivo_midi);
-    	return 1;
-    }
-	fclose(archivo_midi);
+    // APERTURA DE ARCHIVO MIDI Y LECTURA DE DATOS
+   	notas_guardadas_t *notas= lectra_notas(nombre_midi,canal);
+   	if (notas == NULL){
+   		return 1;
+   	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//                        TRASPASO DE DATOS (NOTA) PARA EL MUESTREO
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	//SE CREA UNA ESTRUCTURA QUE ALMACENA VECTORES DINAMISCO CON LOS DATOS A PASAR AL SINTETIZADOR 
-	datos_tranfer_t *trans_notas = crear_espacio_para_datos_transferir(notas, pulsos_por_segundo);
-    destruir_notas_guardadas(notas);
+	datos_tranfer_t *trans_notas = datos_crear_espacio(notas, pulsos_por_segundo);
+    notas_destruir(notas);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//                                      CREACION DE SINTETIZADOR
@@ -98,14 +59,14 @@ int main(int argc, char const *argv[]){
     //ESPACIO PARA GUARDAR DATOS LEIDOS DEL ARCHIVO
 	tda_sintetizador_t *sintetizador = sintetizador_crear();
 	if(sintetizador == NULL){
-		destruir_datos_guardadas(trans_notas);
+		datos_destruir(trans_notas);
 		fprintf(stderr, "Error de memoria creando sintetizador.\n");
 		return 1;
 	}
 	// LECTURA DE ARCHIVO SINTETIZADOR.TXT
     if(!leer_archivo_sintetizador(sintetizador, nombre_sint)){
 		destruir_sintetizador(sintetizador);
-		destruir_datos_guardadas(trans_notas);
+		datos_destruir(trans_notas);
 		fprintf(stderr, "Error leyendo archivo de sintetizador.\n");
 		return 1;
 	}
@@ -119,11 +80,11 @@ int main(int argc, char const *argv[]){
 	tda_tramo_t *muestreo = sintesis_completa(sintetizador, trans_notas, f_m);
 	if(muestreo == NULL){
 		destruir_sintetizador(sintetizador);
-		destruir_datos_guardadas(trans_notas);
+		datos_destruir(trans_notas);
 		fprintf(stderr, "Error en proceso de muestreo.\n");
 		return 1;
 	}
-	destruir_datos_guardadas(trans_notas);
+	datos_destruir(trans_notas);
 	destruir_sintetizador(sintetizador);
 	size_t n_muestras;
 
