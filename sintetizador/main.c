@@ -1,6 +1,6 @@
-//#include <stdio.h>
-//#include <stdint.h>
-//#include <stdlib.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
 
 #include "tda_sintetizador.h"
 #include "tda_tramo.h"
@@ -13,7 +13,7 @@
 
 #define MAX_ARGUMENTOS 10
 #define MAX_NOMBRE 256
-#define DEF_FRECUENCIA_MUESTREO 10250
+#define DEF_FRECUENCIA_MUESTREO 44100
 #define DEF_PULSOS_POR_SEGUNDO 250
 #define N_NOTAS 20
 
@@ -33,7 +33,7 @@ int main(int argc, char const *argv[]){
     }
 
     //APERTURA DE ARCHIVO MIDI Y LECTURA DE DATOS
-   	notas_guardadas_t *notas= lectura_notas(nombre_midi,canal);
+   	notas_guardadas_t *notas = lectura_notas(nombre_midi,canal);
    	if(notas == NULL){
 		fprintf(stderr, "Error de memoria guardando notas.\n");
    		return 1;
