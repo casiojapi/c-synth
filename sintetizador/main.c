@@ -1,6 +1,6 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
+//#include <stdio.h>
+//#include <stdint.h>
+//#include <stdlib.h>
 
 #include "tda_sintetizador.h"
 #include "tda_tramo.h"
@@ -19,10 +19,6 @@
 
 int main(int argc, char const *argv[]){
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//                                  LECTURA PARAMETROS DE ENTRADA
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
 	char nombre_sint[MAX_NOMBRE];
 	char nombre_midi[MAX_NOMBRE];
 	char nombre_wave[MAX_NOMBRE];
@@ -30,31 +26,22 @@ int main(int argc, char const *argv[]){
     uint16_t pulsos_por_segundo = DEF_PULSOS_POR_SEGUNDO;
     char canal = 0;
 
-   if (lectura_entrada(argc,argv,nombre_sint,nombre_midi,nombre_wave,&f_m,&pulsos_por_segundo,&canal) == false){
-   	return 1;
-   }
+	//LECTURA DE ARGUMENTOS DE LINEA DE COMANDO
+    if(!lectura_entrada(argc, argv, nombre_sint, nombre_midi, nombre_wave, &f_m, &pulsos_por_segundo, &canal)){
+		fprintf(stderr, "Error leyendo argumentos.\nUso: $ ./sintetizador -s <sintetizador.txt> -i <entrada.mid> -o <salida.wav> [-c <canal>] [-f <frecuencia>] [-r <pulsosporsegundo>]\n");
+   		return 1;
+    }
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//	                              EXTRACCION DE DATOS DEL MIDI
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // APERTURA DE ARCHIVO MIDI Y LECTURA DE DATOS
+    //APERTURA DE ARCHIVO MIDI Y LECTURA DE DATOS
    	notas_guardadas_t *notas= lectra_notas(nombre_midi,canal);
-   	if (notas == NULL){
+   	if(notas == NULL){
+		fprintf(stderr, "Error de memoria guardando notas.\n");
    		return 1;
    	}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//                        TRASPASO DE DATOS (NOTA) PARA EL MUESTREO
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	//SE CREA UNA ESTRUCTURA QUE ALMACENA VECTORES DINAMISCO CON LOS DATOS A PASAR AL SINTETIZADOR 
+	//SE CREA UNA ESTRUCTURA QUE ALMACENA VECTORES DINAMICOS CON LOS DATOS A PASAR AL SINTETIZADOR 
 	datos_tranfer_t *trans_notas = datos_crear_espacio(notas, pulsos_por_segundo);
     notas_destruir(notas);
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//                                      CREACION DE SINTETIZADOR
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// LECTURA DE ARCHIVO SINTETIZADOR.TXT
     tda_sintetizador_t *sintetizador = sintetizador_crear_leer(nombre_sint);
@@ -63,13 +50,9 @@ int main(int argc, char const *argv[]){
 		fprintf(stderr, "Error leyendo archivo de sintetizador.\n");
 		return 1;
 	}
-	printf("Realizando muestreo...\n");
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//                 ARMADO DEL MUESTREO Y COMIENZO DEL PROCESO DE SINTETIZACION 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//REALIZANDO MUESTREOS
+	printf("Realizando muestreo...\n");
 	tda_tramo_t *muestreo = sintesis_completa(sintetizador, trans_notas, f_m);
 	if(muestreo == NULL){
 		sintetizador_destruir(sintetizador);
@@ -79,13 +62,9 @@ int main(int argc, char const *argv[]){
 	}
 	datos_destruir(trans_notas);
 	sintetizador_destruir(sintetizador);
-	size_t n_muestras;
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//                 ETAPA DE CONVERSION A DATOS WAV Y ESCRITURA DEL ARCHIVO DE SALIDA
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//ESCALA DE NOTA (MAXIMO EN 32667)
+	size_t n_muestras;
     int16_t *vector_int16 = tramo_a_int16(muestreo, &n_muestras);
 	tramo_destruir(muestreo);
 	
