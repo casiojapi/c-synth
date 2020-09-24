@@ -1,4 +1,4 @@
-# c-console-synth
+# c-synth
 <ul>
   <li>a cool synthesizer written in C. </li>
 </ul>
