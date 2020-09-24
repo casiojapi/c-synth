@@ -33,7 +33,7 @@ tda_sintetizador.o:tda_sintetizador.h tda_tramo.h tda_sintetizador.c
 	gcc $(CFLAGS) -c tda_sintetizador.c -lm
 
 clean:
-	rm *.o sintetizador
+	rm *.o synth
 
 cleanwav:
 	rm *.wav
