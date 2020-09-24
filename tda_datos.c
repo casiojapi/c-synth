@@ -13,7 +13,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Estrectura de punteros que guarda los los datos de todas las notas pasadas por el TDA NOTAS
-struct datos_tranfer{
+struct datos_transfer{
 	double *t0;		//TIEMPO INICIAL DE TODAS LAS NOTAS 
 	double *tf;		//TIEMPO FINAL DE TODAS LAS NOTAS
 	float *amp;		//AMPLITUD DE TODAS LAS NOTAS
@@ -25,17 +25,15 @@ struct datos_tranfer{
 //       FUNCIONES ENCARGADE DE CREAR VECTORES DE DATOS PARA ENVIARLE INFORMACION AL SINTETIZADOR.
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-datos_tranfer_t* datos_crear_espacio(notas_guardadas_t *notas,uint16_t negra_por_segundo){
-	datos_tranfer_t *datos = malloc(sizeof(datos_tranfer_t));
+datos_transfer_t* datos_crear_espacio(notas_guardadas_t *notas,uint16_t negra_por_segundo){
+	datos_transfer_t *datos = malloc(sizeof(datos_transfer_t));
 	if (datos == NULL){
-		fprintf(stderr, "No se pudo transferir datos \n");
 		return NULL;
 	}
 
 	datos->t0 = malloc(sizeof(double) * nota_guardadas_longitud(notas));
 	if (datos->t0 == NULL){
 		free(datos);
-		fprintf(stderr, "No se pudo transferir datos \n");
 		return NULL;
 	}
 
@@ -43,7 +41,6 @@ datos_tranfer_t* datos_crear_espacio(notas_guardadas_t *notas,uint16_t negra_por
 	if (datos->tf == NULL){
 		free(datos->t0);
 		free(datos);
-		fprintf(stderr, "No se pudo transferir datos \n");
 		return NULL;
 	}
 
@@ -52,7 +49,6 @@ datos_tranfer_t* datos_crear_espacio(notas_guardadas_t *notas,uint16_t negra_por
 		free(datos->tf);
 		free(datos->t0);
 		free(datos);
-		fprintf(stderr, "No se pudo transferir datos \n");
 		return NULL;
 	}
 
@@ -62,7 +58,6 @@ datos_tranfer_t* datos_crear_espacio(notas_guardadas_t *notas,uint16_t negra_por
 		free(datos->tf);
 		free(datos->t0);
 		free(datos);
-		fprintf(stderr, "No se pudo transferir datos \n");
 		return NULL;
 	}
 
@@ -78,7 +73,7 @@ datos_tranfer_t* datos_crear_espacio(notas_guardadas_t *notas,uint16_t negra_por
 }
 
 // FUNCION ENCARGADA DE DEVOLVER LOS VECTORES DINAMOCOS CON LOS DATOS 
-void datos_pasar(datos_tranfer_t *datos, double **t0_datos, double **tf_datos,float **amp_datos, float **frq_datos, size_t *n_datos){
+void datos_pasar(datos_transfer_t *datos, double **t0_datos, double **tf_datos,float **amp_datos, float **frq_datos, size_t *n_datos){
 	*t0_datos = datos->t0;
 	*tf_datos = datos->tf;
 	*amp_datos = datos->amp;
@@ -86,7 +81,7 @@ void datos_pasar(datos_tranfer_t *datos, double **t0_datos, double **tf_datos,fl
 	*n_datos = datos->n;
 }
 
-void datos_destruir(datos_tranfer_t *datos){
+void datos_destruir(datos_transfer_t *datos){
 	if (datos != NULL){
 		free(datos->frq);
 		free(datos->amp);

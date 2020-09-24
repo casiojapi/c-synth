@@ -3,7 +3,7 @@
 #include "sintesis_de_datos.h"
 #include "tda_datos.h"
 
-tda_tramo_t *sintesis_completa(tda_sintetizador_t *sinte, datos_tranfer_t *trans_notas, int f_m){
+tda_tramo_t *sintesis_completa(tda_sintetizador_t *sinte, datos_transfer_t *trans_notas, int f_m){
     
     double *t0, *tf;
     float *amp, *fre;

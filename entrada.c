@@ -11,7 +11,7 @@ bool lectura_entrada(int argc,char const *argv[],char *nb_sint,char *nb_midi,cha
 
 	//USO DEL PROGRAMA
 	if(argc < 7){
-		fprintf(stderr, "Error, faltan comandos...\nUso: $ ./sintetizador -s <sintetizador.txt> -i <entrada.mid> -o <salida.wav> [-c <canal>] [-f <frecuencia>] [-r <pulsosporsegundo>]\n");
+		//fprintf(stderr, "Error, faltan comandos...\nUso: $ ./sintetizador -s <sintetizador.txt> -i <entrada.mid> -o <salida.wav> [-c <canal>] [-f <frecuencia>] [-r <pulsosporsegundo>]\n");
 		return false;
 	}
 	for (int i = 1; i < argc; ++i){

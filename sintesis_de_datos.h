@@ -3,6 +3,6 @@
 
 #include "tda_datos.h"
 
-tda_tramo_t *sintesis_completa(tda_sintetizador_t *sinte, datos_tranfer_t *trans_notas, int f_m);
+tda_tramo_t *sintesis_completa(tda_sintetizador_t *sinte, datos_transfer_t *trans_notas, int f_m);
 
 #endif

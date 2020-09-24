@@ -22,7 +22,7 @@ bool leer_midi(FILE* f,notas_guardadas_t *notas_guardadas, char canal_elegido){
     uint16_t pulsos_negra;
 
     if(! leer_encabezado(f, &formato, &numero_pistas, &pulsos_negra)) {
-        fprintf(stderr, "Fallo lectura encabezado\n");
+        //fprintf(stderr, "Fallo lectura encabezado\n");
         return false;
     }
 
@@ -31,7 +31,7 @@ bool leer_midi(FILE* f,notas_guardadas_t *notas_guardadas, char canal_elegido){
         // LECTURA ENCABEZADO DE LA PISTA:
         uint32_t tamagno_pista;
         if(! leer_pista(f, &tamagno_pista)) {
-            fprintf(stderr, "Fallo lectura pista\n");
+            //fprintf(stderr, "Fallo lectura pista\n");
             return false;
         }
 
@@ -49,7 +49,7 @@ bool leer_midi(FILE* f,notas_guardadas_t *notas_guardadas, char canal_elegido){
             // LECTURA DEL EVENTO:
             uint8_t buffer[EVENTO_MAX_LONG];
             if(! leer_evento(f, &evento, &canal, &longitud, buffer)) {
-                fprintf(stderr, "Error leyendo evento\n");
+                //fprintf(stderr, "Error leyendo evento\n");
                 return false;
             }
             
@@ -66,21 +66,21 @@ bool leer_midi(FILE* f,notas_guardadas_t *notas_guardadas, char canal_elegido){
                 nota_t nota;
                 signed char octava;
                 if(!decodificar_nota(buffer[EVNOTA_NOTA], &nota, &octava)) {
-                    fprintf(stderr, "Error leyendo nota\n");
+                    //fprintf(stderr, "Error leyendo nota\n");
                     return false;
                 }
                 if (canal == canal_elegido){
                     if (evento == NOTA_ENCENDIDA){
                         if (!nota_guardar_encendida(notas_guardadas, nota, octava, buffer[EVNOTA_VELOCIDAD], tiempo)){
                         
-                            fprintf(stderr, "Error guardar notas encendidas\n");
+                            //fprintf(stderr, "Error guardar notas encendidas\n");
                             return false;
                         }
                     }
                     if (evento == NOTA_APAGADA){
                         if (!nota_guardar_apagada(notas_guardadas, nota, octava, buffer[EVNOTA_VELOCIDAD], tiempo)){
                         
-                            fprintf(stderr, "Error guardar nota apagada\n");
+                            //fprintf(stderr, "Error guardar nota apagada\n");
                             return false;
                         }
                     }
@@ -191,13 +191,13 @@ notas_guardadas_t* lectura_notas(char *nombre_midi,char canal){
     // APERTURA DE ARCHIVO MIDI:
     FILE *archivo_midi = fopen(nombre_midi, "rb");
      if(archivo_midi == NULL) {
-        fprintf(stderr, "Error, no se pudo abrir el archivo midi: \"%s\".\n", nombre_midi);
+        //fprintf(stderr, "Error, no se pudo abrir el archivo midi: \"%s\".\n", nombre_midi);
         return NULL;
     }
     //LECTURA DEL ARCHIVO MIDI
     notas_guardadas_t *notas = nota_crear_espacio();
     if (!leer_midi(archivo_midi, notas, canal)){
-        fprintf(stderr, "Error, No se pudo leer el archivo midi: \"%s\".\n", nombre_midi);
+        //fprintf(stderr, "Error, No se pudo leer el archivo midi: \"%s\".\n", nombre_midi);
         notas_destruir(notas);
         fclose(archivo_midi);
         return NULL;

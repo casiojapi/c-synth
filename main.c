@@ -28,36 +28,36 @@ int main(int argc, char const *argv[]){
 
 	//LECTURA DE ARGUMENTOS DE LINEA DE COMANDO
     if(!lectura_entrada(argc, argv, nombre_sint, nombre_midi, nombre_wave, &f_m, &pulsos_por_segundo, &canal)){
-		fprintf(stderr, "Error leyendo argumentos.\nUso: $ ./sintetizador -s <sintetizador.txt> -i <entrada.mid> -o <salida.wav> [-c <canal>] [-f <frecuencia>] [-r <pulsosporsegundo>]\n");
+		fprintf(stderr, "error - failed reading arguments.\nUse: $ ./synth -s <patches/patch.txt> -i <midiscore.mid> -o <out.wav> [OPTIONAL] [-c <channel>] [-f <sample_rate>] [-r <pulses_per_second>]\n");
    		return 1;
     }
 
     //APERTURA DE ARCHIVO MIDI Y LECTURA DE DATOS
    	notas_guardadas_t *notas = lectura_notas(nombre_midi,canal);
    	if(notas == NULL){
-		fprintf(stderr, "Error de memoria guardando notas.\n");
+		fprintf(stderr, "error - failed reading midi file.\n");
    		return 1;
    	}
 
 	//SE CREA UNA ESTRUCTURA QUE ALMACENA VECTORES DINAMICOS CON LOS DATOS A PASAR AL SINTETIZADOR 
-	datos_tranfer_t *trans_notas = datos_crear_espacio(notas, pulsos_por_segundo);
+	datos_transfer_t *trans_notas = datos_crear_espacio(notas, pulsos_por_segundo);
     notas_destruir(notas);
 
 	// LECTURA DE ARCHIVO SINTETIZADOR.TXT
     tda_sintetizador_t *sintetizador = sintetizador_crear_leer(nombre_sint);
 	if(sintetizador == NULL){
 		datos_destruir(trans_notas);
-		fprintf(stderr, "Error leyendo archivo de sintetizador.\n");
+		fprintf(stderr, "error - failed reading patch file.\n");
 		return 1;
 	}
 
 	//REALIZANDO MUESTREOS
-	printf("Realizando muestreo...\n");
+	printf("sampling phase in progress...\n");
 	tda_tramo_t *muestreo = sintesis_completa(sintetizador, trans_notas, f_m);
 	if(muestreo == NULL){
 		sintetizador_destruir(sintetizador);
 		datos_destruir(trans_notas);
-		fprintf(stderr, "Error en proceso de muestreo.\n");
+		fprintf(stderr, "error - failed on sampling phase.\n");
 		return 1;
 	}
 	datos_destruir(trans_notas);
@@ -71,17 +71,17 @@ int main(int argc, char const *argv[]){
 	//APERTURA DEL ACHIVO DE SALIDA
 	FILE *archivo_wave = fopen(nombre_wave, "wb");
 	if(archivo_wave == NULL) {
-        fprintf(stderr, "No se pudo crear el archivo wave: \"%s\"\n.", nombre_wave);
+        fprintf(stderr, "error - failed creating wave file: \"%s\"\n.", nombre_wave);
         return 1;
     }
-	printf("Escribiendo archivo wave...\n");
+	printf("writing wave file...\n");
 
 	//ESCRITURA DEL ARCHIVO DE SALIDA
 	if(!wave_escribir_completo(archivo_wave, vector_int16, n_muestras, f_m)){
-		fprintf(stderr, "Error escribiendo datos en el archivo wave.\n");
+		fprintf(stderr, "error - failed writing wave file.\n");
 		return 1;
 	}
-	printf("Sintesis completada!\n");
+	printf("finished succesfully!\n");
 	fclose(archivo_wave);
 	return 0;
 }
