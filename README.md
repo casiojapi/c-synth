@@ -1,6 +1,6 @@
 # c-synth
 <ul>
-  <li>a cool synthesizer written in C. </li>
+  <li>a cool synthesizer written in C</li>
 </ul>
 
 
