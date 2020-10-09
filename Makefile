@@ -1,6 +1,6 @@
 CFLAGS=-Wall -std=c99 -pedantic -g
 
-all:main
+all: main
 
 main: tda_nota.o codificacion_decodificacion.o lectura_midi.o lectura_midi.h main.c tda_datos.o archivo_wave.o tda_sintetizador.o tda_tramo.o archivo_wave.h tda_tramo.h tda_sintetizador.h sintesis_de_datos.o sintesis_de_datos.h entrada.o entrada.h
 	gcc $(CFLAGS) main.c tda_nota.o entrada.o codificacion_decodificacion.o lectura_midi.o tda_datos.o tda_sintetizador.o tda_tramo.o sintesis_de_datos.o -o synth archivo_wave.o -lm
